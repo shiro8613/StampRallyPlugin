@@ -11,14 +11,18 @@ import dev.shiro8613.stamprallyplugin.database.DriverType;
 import dev.shiro8613.stamprallyplugin.database.entry.Config;
 import dev.shiro8613.stamprallyplugin.database.entry.StampLocation;
 import dev.shiro8613.stamprallyplugin.map.CustomMapRenderer;
+import dev.shiro8613.stamprallyplugin.map.MapManager;
 import dev.shiro8613.stamprallyplugin.memory.DataStore;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -60,6 +64,7 @@ public final class StampRallyPlugin extends JavaPlugin {
         DataStore.setConfig(new Config(configuration.getInt("config.radius")));
 
         LoadImages();
+        CustomMapRenderer.Init();
         CustomMapRenderer.LoadRenderer();
 
         new CommandAPICommand("srp")
@@ -67,12 +72,31 @@ public final class StampRallyPlugin extends JavaPlugin {
                         .withSubcommand(new CommandAPICommand("new")
                                 .withArguments(new EntitySelectorArgument.ManyPlayers("player"))
                                 .executes((commandSender, commandArguments) -> {
-                                    //create new
+                                    @SuppressWarnings("unchecked")
+                                    Collection<Player> players = (Collection<Player>) commandArguments.get(0);
+                                    if (players != null) {
+                                        players.forEach(player -> {
+                                            ItemStack itemStack = MapManager.CreateItem(player.getWorld());
+                                            player.getInventory().addItem(itemStack);
+                                        });
+                                    } else {
+                                        commandSender.sendMessage("Not Player");
+                                    }
                                 }))
                         .withSubcommand(new CommandAPICommand("get")
                                 .withArguments(new IntegerArgument("id"))
                                 .executesPlayer((commandSender, commandArguments) -> {
-                                    //create get
+                                    Integer mapId = (Integer) commandArguments.get(0);
+                                    if (Objects.nonNull(mapId) && DataStore.getMapStamp().containsKey(mapId)) {
+                                        ItemStack itemStack = MapManager.GetItem(mapId);
+                                        if(itemStack != null) {
+                                            commandSender.getInventory().addItem(itemStack);
+                                        } else {
+                                            commandSender.sendMessage("MapId is not link item");
+                                        }
+                                    } else {
+                                        commandSender.sendMessage("MapId is not used");
+                                    }
                                 })))
                 .withSubcommand(new CommandAPICommand("config")
                         .withSubcommand(new CommandAPICommand("pos")
@@ -109,6 +133,8 @@ public final class StampRallyPlugin extends JavaPlugin {
                                             }
                                         }))))
                 .register();
+
+        getServer().getPluginManager().registerEvents(new Event(), this);
     }
 
     @Override
