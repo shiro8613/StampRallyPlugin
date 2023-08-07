@@ -6,7 +6,9 @@ import org.bukkit.Location;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DatabaseConn implements DatabaseConnImpl{
 
@@ -19,10 +21,6 @@ public class DatabaseConn implements DatabaseConnImpl{
     @Override
     public void CreateTable() throws SQLException {
         Statement statement = this.connection.createStatement();
-        statement.execute("""
-                CREATE TABLE IF NOT EXISTS config(
-                    Radius INT
-                );""");
 
         statement.execute("""
                 CREATE TABLE IF NOT EXISTS positions(
@@ -37,7 +35,8 @@ public class DatabaseConn implements DatabaseConnImpl{
         statement.execute("""
                 CREATE TABLE IF NOT EXISTS maps(
                     MapId INT,
-                    StampId INT
+                    Stamps TEXT,
+                    PRIMARY KEY (MapId)
                 );""");
     }
 
@@ -81,6 +80,43 @@ public class DatabaseConn implements DatabaseConnImpl{
             preparedStatement.setInt(4, location.getBlockY());
             preparedStatement.setInt(5, location.getBlockZ());
             preparedStatement.executeUpdate();
+
+            return true;
+        } catch (SQLException e) {
+            StampRallyPlugin.getInstance().getLogger().warning(e.getMessage());
+            return false;
+        }
+    }
+
+    public Map<Integer, String> getMapStamp() {
+        String sql = "SELECT * FROM maps;";
+        Map<Integer, String> map = new HashMap<>();
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                map.put(resultSet.getInt(1), resultSet.getString(2));
+            }
+
+            return map;
+        } catch (SQLException e) {
+            StampRallyPlugin.getInstance().getLogger().warning(e.getMessage());
+            return null;
+        }
+    }
+
+    public boolean setMapStamp(int MapId, String Stamps) {
+        String sql = """
+                    INSERT INTO maps (MapId, Stamps)
+                    VALUES (?,?)
+                    ON DUPLICATE KEY UPDATE `Stamps` = VALUES(`Stamps`);
+                    """;
+        try {
+            PreparedStatement preparedStatement = this.connection.prepareStatement(sql);
+            preparedStatement.setInt(1, MapId);
+            preparedStatement.setString(2, Stamps);
+            preparedStatement.executeUpdate();
+
             return true;
         } catch (SQLException e) {
             StampRallyPlugin.getInstance().getLogger().warning(e.getMessage());
