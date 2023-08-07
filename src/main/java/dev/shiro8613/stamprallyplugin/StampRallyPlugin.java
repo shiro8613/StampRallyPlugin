@@ -8,11 +8,15 @@ import dev.jorel.commandapi.arguments.IntegerArgument;
 import dev.jorel.commandapi.arguments.LocationArgument;
 import dev.shiro8613.stamprallyplugin.database.Database;
 import dev.shiro8613.stamprallyplugin.database.DriverType;
+import dev.shiro8613.stamprallyplugin.database.entry.Config;
 import dev.shiro8613.stamprallyplugin.database.entry.StampLocation;
+import dev.shiro8613.stamprallyplugin.map.CustomMapRenderer;
+import dev.shiro8613.stamprallyplugin.memory.DataStore;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.io.File;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
@@ -52,6 +56,11 @@ public final class StampRallyPlugin extends JavaPlugin {
             throw new RuntimeException(e);
         }
 
+        DataStore.Init();
+        DataStore.setConfig(new Config(configuration.getInt("config.radius")));
+
+        LoadImages();
+        CustomMapRenderer.LoadRenderer();
 
         new CommandAPICommand("srp")
                 .withSubcommand(new CommandAPICommand("create")
@@ -85,28 +94,19 @@ public final class StampRallyPlugin extends JavaPlugin {
                                                                      new LocationArgument("position")))
                                         .executes((commandSender, commandArguments) -> {
                                             if (commandArguments.count() > 2) return;
-                                            int stampId = (int) commandArguments.get(0);
-                                            if (0 < stampId && stampId < 10) {
+                                            Integer stampId = (Integer) commandArguments.get(0);
+                                            if (Objects.nonNull(stampId) && 0 < stampId && stampId < 10) {
                                                 Location location = (Location) commandArguments.get(1);
                                                 assert location != null;
                                                 if (database.getConn().setStampLocation(stampId, location)) {
                                                     commandSender.sendMessage("Add " + stampId + " Pos -> " + location);
+                                                    DataStore.LoadLocationsData();
                                                 } else {
                                                     commandSender.sendMessage("Internal server error");
                                                 }
                                             } else {
                                                 commandSender.sendMessage("stampId is range 1-9");
                                             }
-                                        })))
-                        .withSubcommand(new CommandAPICommand("radius")
-                                .withSubcommand(new CommandAPICommand("set")
-                                        .withArguments(new IntegerArgument("radius"))
-                                        .executes((commandSender, commandArguments) -> {
-                                            //radius set
-                                        }))
-                                .withSubcommand(new CommandAPICommand("get")
-                                        .executes((commandSender, commandArguments) -> {
-                                            //radius get
                                         }))))
                 .register();
     }
@@ -122,6 +122,19 @@ public final class StampRallyPlugin extends JavaPlugin {
 
     public static JavaPlugin getInstance() {
         return instance;
+    }
+
+    private void LoadImages() {
+        File dataFolder = getDataFolder();
+        if(dataFolder.mkdirs()) getLogger().info("Created Folder");
+        String path = dataFolder.getPath() + File.separator + "images";
+        File imagesFolder = new File(path);
+        if(imagesFolder.mkdirs()) getLogger().info("Create images Folder");
+        String[] list = imagesFolder.list();
+
+        assert list != null;
+        DataStore.LoadImages(list, path);
+
     }
 
 }
