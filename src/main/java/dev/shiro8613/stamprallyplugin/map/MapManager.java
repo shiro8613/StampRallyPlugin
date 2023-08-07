@@ -20,6 +20,9 @@ public class MapManager {
 
         ItemStack itemStack = new ItemStack(Material.FILLED_MAP);
         MapMeta mapMeta = (MapMeta) itemStack.getItemMeta();
+
+        CustomMapRenderer.ReloadRenderer(mapView.getId());
+
         mapMeta.setMapView(mapView);
         itemStack.setItemMeta(mapMeta);
 
@@ -29,12 +32,18 @@ public class MapManager {
     public static ItemStack GetItem(int mapId) {
         MapView mapView = Bukkit.getMap(mapId);
 
-        ItemStack itemStack = new ItemStack(Material.FILLED_MAP);
-        MapMeta mapMeta = (MapMeta) itemStack.getItemMeta();
-        mapMeta.setMapView(mapView);
-        itemStack.setItemMeta(mapMeta);
+        if (mapView != null) {
+            ItemStack itemStack = new ItemStack(Material.FILLED_MAP);
+            MapMeta mapMeta = (MapMeta) itemStack.getItemMeta();
 
-        return itemStack;
+            CustomMapRenderer.ReloadRenderer(mapView.getId());
 
+            mapMeta.setMapView(mapView);
+            itemStack.setItemMeta(mapMeta);
+
+            return itemStack;
+        } else {
+            return null;
+        }
     }
 }
