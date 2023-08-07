@@ -18,9 +18,14 @@ import java.util.Objects;
 public class CustomMapRenderer extends MapRenderer {
 
     private final List<ImagePosition.ImageAndPos> imageAndPosList;
+    private static Map<Integer, ImagePosition.ImagePos> imagePosMap;
 
     public CustomMapRenderer(List<ImagePosition.ImageAndPos> imageAndPosList) {
         this.imageAndPosList = imageAndPosList;
+    }
+
+    public static void Init() {
+        imagePosMap = ImagePosition.getImagePos();
     }
 
     @Override
@@ -29,7 +34,12 @@ public class CustomMapRenderer extends MapRenderer {
         mapCanvas.drawImage(0, 0, backImage);
 
         imageAndPosList.forEach(imageAndPos ->
-                mapCanvas.drawImage(imageAndPos.imagePos.x, imageAndPos.imagePos.y, imageAndPos.image));
+                mapCanvas.drawImage(
+                        imageAndPos.imagePos.x,
+                        imageAndPos.imagePos.y,
+                        imageAndPos.image.getScaledInstance(30,30,Image.SCALE_DEFAULT)
+                )
+        );
     }
 
     public static void LoadRenderer() {
@@ -37,10 +47,10 @@ public class CustomMapRenderer extends MapRenderer {
         map.forEach((key, value) -> {
             List<ImagePosition.ImageAndPos> imageAndPoses = new ArrayList<>();
             MapView mapView = Bukkit.getMap(key);
-            Objects.requireNonNull(StampData.DecodeStamps(value)).forEach((stampName, has) -> {
+            Objects.requireNonNull(StampData.DecodeStamps(value)).forEach((stampId, has) -> {
                 if (has) {
-                    Image image = DataStore.getImageMap().get(stampName);
-                    ImagePosition.ImagePos pos =  ImagePosition.getImagePos().get(stampName);
+                    Image image = DataStore.getImageMap().get(String.valueOf(stampId));
+                    ImagePosition.ImagePos pos =  imagePosMap.get(stampId);
                     imageAndPoses.add(new ImagePosition.ImageAndPos(image,pos));
                 }
             });
@@ -56,10 +66,10 @@ public class CustomMapRenderer extends MapRenderer {
 
         List<ImagePosition.ImageAndPos> imageAndPoses = new ArrayList<>();
         MapView mapView = Bukkit.getMap(mapId);
-        Objects.requireNonNull(StampData.DecodeStamps(map.get(mapId))).forEach((stampName, has) -> {
+        Objects.requireNonNull(StampData.DecodeStamps(map.get(mapId))).forEach((stampId, has) -> {
             if (has) {
-                Image image = DataStore.getImageMap().get(stampName);
-                ImagePosition.ImagePos pos =  ImagePosition.getImagePos().get(stampName);
+                Image image = DataStore.getImageMap().get(String.valueOf(stampId));
+                ImagePosition.ImagePos pos =  imagePosMap.get(stampId);
                 imageAndPoses.add(new ImagePosition.ImageAndPos(image,pos));
             }
         });
