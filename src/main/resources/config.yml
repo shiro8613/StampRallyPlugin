@@ -1,0 +1,7 @@
+database:
+  type: "mysql"
+  host: "172.19.44.216"
+  port: 3306
+  database: "stampll"
+  user: "stamp"
+  password: "stamppasswd"
