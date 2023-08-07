@@ -12,9 +12,9 @@ import java.util.Map;
 
 public class StampData {
 
-    public static Map<String, Boolean> DecodeStamps(String str) {
+    public static Map<Integer, Boolean> DecodeStamps(String str) {
         ObjectMapper objectMapper = new ObjectMapper();
-        TypeReference<HashMap<String, Boolean>> reference = new TypeReference<HashMap<String, Boolean>>() {};
+        TypeReference<HashMap<Integer, Boolean>> reference = new TypeReference<HashMap<Integer, Boolean>>() {};
         try {
             return objectMapper.readValue(str, reference);
         } catch (JsonProcessingException e) {
@@ -23,7 +23,7 @@ public class StampData {
         }
     }
 
-    public static String EncodeStamps(Map<String, Boolean> map) {
+    public static String EncodeStamps(Map<Integer, Boolean> map) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             return objectMapper.writeValueAsString(map);
@@ -33,14 +33,13 @@ public class StampData {
         }
     }
 
-    public static Map<String, Boolean> getEmptyMap() {
-        Map<String, Boolean> map = new HashMap<>();
+    public static Map<Integer, Boolean> getEmptyMap() {
+        Map<Integer, Boolean> map = new HashMap<>();
         getKeyNames().forEach(k -> map.put(k, false));
         return map;
     }
 
-    public static List<String> getKeyNames() {
-        return Arrays.asList("stamp1", "stamp2", "stamp3", "stamp4",
-                "stamp5", "stamp6", "stamp7", "stamp8", "stamp9");
+    public static List<Integer> getKeyNames() {
+        return Arrays.asList(1, 2, 3, 4, 5, 6, 7, 8, 9);
     }
 }
