@@ -9,20 +9,22 @@ import java.util.Map;
 
 public class ImagePosition {
 
-    public static Map<String, ImagePos> getImagePos() {
-        Map<String, ImagePos> map = new HashMap<>();
-        List<String> names = StampData.getKeyNames();
+    public static Map<Integer, ImagePos> getImagePos() {
+        Map<Integer, ImagePos> map = new HashMap<>();
+        List<Integer> names = StampData.getKeyNames();
 
         int X = 13;
         int Y = 23;
 
-        for (int i = 0; i <= names.size(); i++) {
+        for (int i = 0; i < names.size(); i++) {
             if ( i != 0 && i % 3 == 0) {
-                X += 37;
+                X = 13;
                 Y += 37;
             }
 
             map.put(names.get(i), new ImagePos(X, Y));
+
+            X += 37;
         }
 
         return map;
