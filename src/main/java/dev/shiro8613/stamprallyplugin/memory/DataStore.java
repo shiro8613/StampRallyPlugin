@@ -54,7 +54,7 @@ public class DataStore {
 
                 String stampName = filename.replace(".png", "");
 
-                if(!StampData.getKeyNames().contains(stampName) && !stampName.equals("background")) return;
+                if(!stampName.equals("background") && !StampData.getKeyNames().contains(Integer.valueOf(stampName))) return;
 
                 File imageFile = new File(path + File.separator + filename);
                 try {
