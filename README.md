@@ -1,4 +1,4 @@
-**MYSQLを使うときは自分でテーブルを作ってね♡**
+**MYSQLを使うときは自分でデータベースとユーザーを作ってね♡**
 
 ```mysql
 CREATE USER 'stamp'@'%' IDENTIFIED BY 'stamppasswd';
