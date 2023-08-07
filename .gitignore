@@ -111,3 +111,8 @@ buildNumber.properties
 
 # Common working directory
 run/
+/.run/build.ps1
+/.run/BuildCopy.run.xml
+/.run/Dev.run.xml
+/.run/DevBuild.run.xml
+/.run/install.run.xml
