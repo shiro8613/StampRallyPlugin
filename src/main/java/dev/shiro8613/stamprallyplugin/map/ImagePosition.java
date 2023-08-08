@@ -19,12 +19,12 @@ public class ImagePosition {
         for (int i = 0; i < names.size(); i++) {
             if ( i != 0 && i % 3 == 0) {
                 X = 13;
-                Y += 37;
+                Y += 36;
             }
 
             map.put(names.get(i), new ImagePos(X, Y));
 
-            X += 37;
+            X += 36;
         }
 
         return map;

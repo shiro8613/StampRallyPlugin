@@ -37,7 +37,7 @@ public class CustomMapRenderer extends MapRenderer {
                 mapCanvas.drawImage(
                         imageAndPos.imagePos.x,
                         imageAndPos.imagePos.y,
-                        imageAndPos.image.getScaledInstance(30,30,Image.SCALE_DEFAULT)
+                        imageAndPos.image.getScaledInstance(31,31, Image.SCALE_DEFAULT)
                 )
         );
     }
