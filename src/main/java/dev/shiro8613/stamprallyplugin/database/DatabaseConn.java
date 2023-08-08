@@ -124,6 +124,22 @@ public class DatabaseConn implements DatabaseConnImpl{
         }
     }
 
+    public boolean deleteMapStamp(int MapId) {
+        String sql = """
+                    DELETE FROM maps WHERE mapId = ?;
+                   """;
+        try {
+            PreparedStatement preparedStatement = this.connection.prepareStatement(sql);
+            preparedStatement.setInt(1, MapId);
+            preparedStatement.executeUpdate();
+
+            return true;
+        } catch (SQLException e) {
+            StampRallyPlugin.getInstance().getLogger().warning(e.getMessage());
+            return false;
+        }
+    }
+
     @Override
     public void Close() throws SQLException {
         this.connection.close();
