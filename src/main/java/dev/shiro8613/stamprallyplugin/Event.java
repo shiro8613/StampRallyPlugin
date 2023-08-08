@@ -46,11 +46,9 @@ public class Event implements Listener {
                 DataStore.LoadMapStampData();
                 CustomMapRenderer.ReloadRenderer(mapId);
             }
-        }, () -> {
-            player.sendMessage(Component.text("取得可能範囲中心より", NamedTextColor.WHITE)
+        }, () -> player.sendMessage(Component.text("取得可能範囲中心より", NamedTextColor.WHITE)
                     .append(Component.text("「" + (radius + 7) +"ブロック」", NamedTextColor.YELLOW))
-                    .append(Component.text("の範囲に入っています。もう少し近づいて再度お試しください。", NamedTextColor.WHITE)));
-        });
+                    .append(Component.text("の範囲に入っています。もう少し近づいて再度お試しください。", NamedTextColor.WHITE))));
     }
 
 }

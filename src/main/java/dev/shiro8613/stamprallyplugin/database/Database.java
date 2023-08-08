@@ -33,10 +33,10 @@ public class Database {
     }
 
     public void openConnection() throws SQLException, ClassNotFoundException {
-        if (databaseConn != null && !databaseConn.isClosed()) return;
+        if (databaseConn != null && databaseConn.isClosed()) return;
 
         synchronized (this) {
-            if (databaseConn != null && !databaseConn.isClosed()) return;
+            if (databaseConn != null && databaseConn.isClosed()) return;
 
             Class.forName("com.mysql.jdbc.Driver");
             databaseConn = new DatabaseConn(driverSetup());
@@ -44,7 +44,7 @@ public class Database {
     }
 
     public void closeConnection() throws SQLException {
-        if (databaseConn != null && !databaseConn.isClosed()) return;
+        if (databaseConn != null && databaseConn.isClosed()) return;
         if (databaseConn != null) {
             databaseConn.Close();
         }

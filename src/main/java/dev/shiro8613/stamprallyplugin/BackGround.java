@@ -2,10 +2,8 @@ package dev.shiro8613.stamprallyplugin;
 
 import dev.shiro8613.stamprallyplugin.memory.DataStore;
 import dev.shiro8613.stamprallyplugin.utils.DetectItem;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.*;

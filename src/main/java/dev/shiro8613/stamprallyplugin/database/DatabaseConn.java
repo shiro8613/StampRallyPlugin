@@ -147,6 +147,6 @@ public class DatabaseConn implements DatabaseConnImpl{
 
     @Override
     public boolean isClosed() throws SQLException {
-        return this.connection.isClosed();
+        return !this.connection.isClosed();
     }
 }
