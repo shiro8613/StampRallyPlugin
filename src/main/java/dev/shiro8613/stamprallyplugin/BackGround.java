@@ -1,6 +1,7 @@
 package dev.shiro8613.stamprallyplugin;
 
 import dev.shiro8613.stamprallyplugin.memory.DataStore;
+import dev.shiro8613.stamprallyplugin.utils.DetectItem;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
@@ -18,18 +19,11 @@ public class BackGround {
                 playerMap.clear();
                 for(Player player : plugin.getServer().getOnlinePlayers()) {
                     PlayerInventory inventory = player.getInventory();
-                    if (!inventory.contains(Material.FILLED_MAP)) break;
-                    Arrays.stream(inventory.getStorageContents())
-                            .filter(Objects::nonNull)
-                            .filter(itemStack -> itemStack.getType().equals(Material.FILLED_MAP))
-                            .forEach(itemStack -> {
-                                MapMeta mapMeta = (MapMeta) itemStack.getItemMeta();
-                                if (mapMeta == null) return;
-                                int mapId = mapMeta.getMapId();
-                                if (DataStore.getMapStamp().containsKey(mapId)) {
-                                    playerMap.add(new HasPlayer(player, mapId));
-                                }
-                            });
+                    DetectItem.StackId stackId = DetectItem.search(inventory);
+                    if(stackId == null) break;
+                    if (DataStore.getMapStamp().containsKey(stackId.mapId)) {
+                        playerMap.add(new HasPlayer(player, stackId.mapId));
+                    }
                 }
         }, 0, 20);
     }
