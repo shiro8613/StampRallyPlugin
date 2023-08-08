@@ -1,7 +1,6 @@
 package dev.shiro8613.stamprallyplugin.utils;
 
 import dev.shiro8613.stamprallyplugin.database.entry.StampLocation;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 public class DistanceLocation {

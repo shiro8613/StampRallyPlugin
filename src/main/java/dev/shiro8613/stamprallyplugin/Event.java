@@ -5,16 +5,15 @@ import dev.shiro8613.stamprallyplugin.database.entry.StampLocation;
 import dev.shiro8613.stamprallyplugin.map.CustomMapRenderer;
 import dev.shiro8613.stamprallyplugin.memory.DataStore;
 import dev.shiro8613.stamprallyplugin.utils.DistanceLocation;
+import dev.shiro8613.stamprallyplugin.utils.HandItem;
 import dev.shiro8613.stamprallyplugin.utils.NearLocation;
 import dev.shiro8613.stamprallyplugin.utils.json.StampData;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
-import org.bukkit.inventory.meta.MapMeta;
+
 
 import java.util.Map;
 
@@ -25,17 +24,7 @@ public class Event implements Listener {
         Player player = event.getPlayer();
         PlayerInventory inventory = player.getInventory();
 
-        int focusItemSlot = inventory.getHeldItemSlot();
-        ItemStack focusItem = inventory.getItem(focusItemSlot);
-
-        if (focusItem == null || !focusItem.getType().equals(Material.FILLED_MAP)) return;
-
-        MapMeta meta = (MapMeta) focusItem.getItemMeta();
-
-        if (meta == null) return;
-
-        int mapId = meta.getMapId();
-
+        int mapId = HandItem.getMapId(inventory);
         if(!DataStore.getMapStamp().containsKey(mapId)) return;
 
         StampLocation nearStampLocation = NearLocation.Calc(DataStore.getLocations(), player.getLocation());
@@ -50,9 +39,10 @@ public class Event implements Listener {
                 map.put(nearStampLocation.StampId, true);
             }
 
-            Database.getInstance().setMapStamp(mapId, StampData.EncodeStamps(map));
-            DataStore.LoadMapStampData();
-            CustomMapRenderer.ReloadRenderer(mapId);
+            if (Database.getInstance().setMapStamp(mapId, StampData.EncodeStamps(map))) {
+                DataStore.LoadMapStampData();
+                CustomMapRenderer.ReloadRenderer(mapId);
+            }
         });
     }
 

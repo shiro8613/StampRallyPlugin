@@ -14,7 +14,7 @@ public class StampData {
 
     public static Map<Integer, Boolean> DecodeStamps(String str) {
         ObjectMapper objectMapper = new ObjectMapper();
-        TypeReference<HashMap<Integer, Boolean>> reference = new TypeReference<HashMap<Integer, Boolean>>() {};
+        TypeReference<HashMap<Integer, Boolean>> reference = new TypeReference<>() {};
         try {
             return objectMapper.readValue(str, reference);
         } catch (JsonProcessingException e) {
