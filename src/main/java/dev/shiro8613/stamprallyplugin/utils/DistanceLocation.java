@@ -1,29 +1,25 @@
 package dev.shiro8613.stamprallyplugin.utils;
 
 import dev.shiro8613.stamprallyplugin.database.entry.StampLocation;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 public class DistanceLocation {
-    public static void CalcRun(int radius, StampLocation centerLocation, Location location, Context ctx) {
-        int PosX1 = centerLocation.PosX;
-        int PosY1 = centerLocation.PosY;
-        int PosZ1 = centerLocation.PosZ;
+    public static void CalcRun(int radius, StampLocation centerLocation, Location location, int nearest, Context ctx1, Context ctx2) {
+        Location centLocation = new Location(Bukkit.getWorld(
+                centerLocation.WorldName),
+                centerLocation.PosX,
+                centerLocation.PosY,
+                centerLocation.PosZ);
 
-        int PosX2 = (int) Math.round(location.getX());
-        int PosY2 = (int) Math.round(location.getY());
-        int PosZ2 = (int) Math.round(location.getZ());
+        double r = Math.pow(radius, 2);
+        double distance = centLocation.distanceSquared(location);
 
-        for (int x = -radius; x <= radius; x++) {
-            for (int y = -radius; y <= radius; y++) {
-                for (int z = -radius; z <= radius; z++) {
-                    if ((PosX1 + x) == PosX2 && (PosY1 + y) == PosY2 && (PosZ1 + z) == PosZ2) {
-                        ctx.Run();
-                    }
-                }
-            }
+        if (distance <= r) {
+            ctx1.Run();
+        } else if (distance <= Math.pow(nearest, 2)) {
+            ctx2.Run();
         }
-
-
     }
 
     public interface Context{
