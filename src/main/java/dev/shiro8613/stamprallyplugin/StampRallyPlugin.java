@@ -13,7 +13,11 @@ import dev.shiro8613.stamprallyplugin.database.entry.StampLocation;
 import dev.shiro8613.stamprallyplugin.map.CustomMapRenderer;
 import dev.shiro8613.stamprallyplugin.map.MapManager;
 import dev.shiro8613.stamprallyplugin.memory.DataStore;
+import dev.shiro8613.stamprallyplugin.utils.HandItem;
+import dev.shiro8613.stamprallyplugin.utils.json.StampData;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -21,10 +25,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public final class StampRallyPlugin extends JavaPlugin {
 
@@ -67,8 +68,52 @@ public final class StampRallyPlugin extends JavaPlugin {
         CustomMapRenderer.Init();
         CustomMapRenderer.LoadRenderer();
 
+        BackGround.Init(this);
+
         new CommandAPICommand("srp")
+                .withSubcommand(new CommandAPICommand("gg")
+                        .withPermission("srp.gift")
+                        .executesPlayer((player, commandArguments) -> {
+                            int mapId = HandItem.getMapId(player.getInventory());
+                            if(DataStore.getMapStamp().containsKey(mapId)) {
+                                String data = DataStore.getMapStamp().get(mapId);
+                                Map<Integer, Boolean> map = StampData.DecodeStamps(data);
+                                if (Objects.nonNull(map) && !map.containsValue(false)) {
+                                    player.getInventory().addItem(new ItemStack(Material.DIAMOND)); //渡すものを記述
+                                } else {
+                                    player.sendMessage("stamp is not fill");
+                                }
+                            } else {
+                                player.sendMessage("map is not used");
+                            }
+                        }))
+                .withSubcommand(new CommandAPICommand("players")
+                        .withPermission("srp.manage")
+                        .executes((commandSender, commandArguments) -> {
+                            commandSender.sendMessage("---List---");
+                            BackGround.getHasPlayerMap().forEach(hasPlayer ->
+                                    commandSender.sendMessage("["+ hasPlayer.mapId + "] " + hasPlayer.player.getName()));
+                            commandSender.sendMessage("----------");
+                        }))
+                .withSubcommand(new CommandAPICommand("delete")
+                        .withPermission("srp.manage")
+                        .withArguments(new IntegerArgument("mapId"))
+                        .executes((commandSender, commandArguments) -> {
+                            Integer mapId = (Integer) commandArguments.get(0);
+                            if (Objects.nonNull(mapId) && DataStore.getMapStamp().containsKey(mapId)) {
+                                if (database.getConn().deleteMapStamp(mapId)) {
+                                    commandSender.sendMessage("deleted map #" + mapId);
+                                    DataStore.LoadMapStampData();
+                                    CustomMapRenderer.ReloadRenderer(mapId);
+                                } else {
+                                    commandSender.sendMessage("internal server error");
+                                }
+                            } else {
+                                commandSender.sendMessage("map is not used");
+                            }
+                        }))
                 .withSubcommand(new CommandAPICommand("create")
+                        .withPermission("srp.manage")
                         .withSubcommand(new CommandAPICommand("new")
                                 .withArguments(new EntitySelectorArgument.ManyPlayers("player"))
                                 .executes((commandSender, commandArguments) -> {
@@ -99,6 +144,7 @@ public final class StampRallyPlugin extends JavaPlugin {
                                     }
                                 })))
                 .withSubcommand(new CommandAPICommand("config")
+                        .withPermission("srp.manage")
                         .withSubcommand(new CommandAPICommand("pos")
                                 .withSubcommand(new CommandAPICommand("gets")
                                         .executes((commandSender, commandArguments) -> {
