@@ -15,7 +15,6 @@ import dev.shiro8613.stamprallyplugin.map.MapManager;
 import dev.shiro8613.stamprallyplugin.memory.DataStore;
 import dev.shiro8613.stamprallyplugin.utils.HandItem;
 import dev.shiro8613.stamprallyplugin.utils.json.StampData;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -151,9 +150,9 @@ public final class StampRallyPlugin extends JavaPlugin {
                                             List<StampLocation> list = database.getConn().getStampLocation();
                                             if (list != null) {
                                                 commandSender.sendMessage("---List---");
-                                                list.forEach(l -> {
-                                                    commandSender.sendMessage("[" + l.StampId + "] "+ l.WorldName + "," + l.PosX + "," + l.PosY + "," + l.PosZ);
-                                                });
+                                                list.forEach(l ->
+                                                    commandSender.sendMessage("[" + l.StampId + "] "+ l.WorldName + "," + l.PosX + "," + l.PosY + "," + l.PosZ)
+                                                );
                                                 commandSender.sendMessage("----------");
                                             } else {
                                                 commandSender.sendMessage("Empty");
