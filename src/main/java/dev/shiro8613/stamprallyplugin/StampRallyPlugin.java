@@ -13,13 +13,17 @@ import dev.shiro8613.stamprallyplugin.database.entry.StampLocation;
 import dev.shiro8613.stamprallyplugin.map.CustomMapRenderer;
 import dev.shiro8613.stamprallyplugin.map.MapManager;
 import dev.shiro8613.stamprallyplugin.memory.DataStore;
+import dev.shiro8613.stamprallyplugin.utils.DetectItem;
 import dev.shiro8613.stamprallyplugin.utils.HandItem;
 import dev.shiro8613.stamprallyplugin.utils.json.StampData;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -79,11 +83,12 @@ public final class StampRallyPlugin extends JavaPlugin {
                                 Map<Integer, Boolean> map = StampData.DecodeStamps(data);
                                 if (Objects.nonNull(map) && !map.containsValue(false)) {
                                     player.getInventory().addItem(new ItemStack(Material.DIAMOND)); //渡すものを記述
+                                    player.sendMessage(Component.text("景品を付与しました。", NamedTextColor.AQUA));
                                 } else {
-                                    player.sendMessage("stamp is not fill");
+                                    player.sendMessage(Component.text("まだスタンプが埋まっていません！", NamedTextColor.RED));
                                 }
                             } else {
-                                player.sendMessage("map is not used");
+                                player.sendMessage(Component.text("カードを手に持って実行してください！　または対応していないマップ。", NamedTextColor.RED));
                             }
                         }))
                 .withSubcommand(new CommandAPICommand("players")
@@ -102,6 +107,14 @@ public final class StampRallyPlugin extends JavaPlugin {
                             if (Objects.nonNull(mapId) && DataStore.getMapStamp().containsKey(mapId)) {
                                 if (database.getConn().deleteMapStamp(mapId)) {
                                     commandSender.sendMessage("deleted map #" + mapId);
+                                    BackGround.getHasPlayerMap().forEach(hp -> {
+                                        if (hp.mapId == mapId) {
+                                            PlayerInventory inventory = hp.player.getInventory();
+                                            DetectItem.StackId stackId = DetectItem.search(inventory);
+                                            if (stackId == null) return;
+                                            inventory.remove(stackId.item);
+                                        }
+                                    });
                                     DataStore.LoadMapStampData();
                                     CustomMapRenderer.ReloadRenderer(mapId);
                                 } else {
