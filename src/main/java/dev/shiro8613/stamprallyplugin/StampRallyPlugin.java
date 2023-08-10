@@ -10,6 +10,7 @@ import dev.shiro8613.stamprallyplugin.database.Database;
 import dev.shiro8613.stamprallyplugin.database.DriverType;
 import dev.shiro8613.stamprallyplugin.database.entry.Config;
 import dev.shiro8613.stamprallyplugin.database.entry.StampLocation;
+import dev.shiro8613.stamprallyplugin.item.Gift;
 import dev.shiro8613.stamprallyplugin.map.CustomMapRenderer;
 import dev.shiro8613.stamprallyplugin.map.MapManager;
 import dev.shiro8613.stamprallyplugin.memory.DataStore;
@@ -73,6 +74,8 @@ public final class StampRallyPlugin extends JavaPlugin {
 
         BackGround.Init(this);
 
+        Gift.Init();
+
         new CommandAPICommand("srp")
                 .withSubcommand(new CommandAPICommand("gg")
                         .withPermission("srp.gift")
@@ -82,7 +85,7 @@ public final class StampRallyPlugin extends JavaPlugin {
                                 String data = DataStore.getMapStamp().get(mapId);
                                 Map<Integer, Boolean> map = StampData.DecodeStamps(data);
                                 if (Objects.nonNull(map) && !map.containsValue(false)) {
-                                    player.getInventory().addItem(new ItemStack(Material.DIAMOND)); //渡すものを記述
+                                    Gift.Give(player);
                                     player.sendMessage(Component.text("景品を付与しました。", NamedTextColor.AQUA));
                                 } else {
                                     player.sendMessage(Component.text("まだスタンプが埋まっていません！", NamedTextColor.RED));
