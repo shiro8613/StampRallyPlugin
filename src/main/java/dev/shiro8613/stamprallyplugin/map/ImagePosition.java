@@ -13,18 +13,18 @@ public class ImagePosition {
         Map<Integer, ImagePos> map = new HashMap<>();
         List<Integer> names = StampData.getKeyNames();
 
-        int X = 13;
-        int Y = 23;
+        int X = 0;
+        int Y = 0;
 
         for (int i = 0; i < names.size(); i++) {
             if ( i != 0 && i % 3 == 0) {
-                X = 13;
-                Y += 36;
+                X = 0;
+                Y += 42;
             }
 
             map.put(names.get(i), new ImagePos(X, Y));
 
-            X += 36;
+            X += 42;
         }
 
         return map;
