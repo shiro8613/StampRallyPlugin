@@ -1,17 +1,14 @@
 package dev.shiro8613.stamprallyplugin.item;
 
-import com.destroystokyo.paper.profile.PlayerProfile;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SkullMeta;
 
-import java.util.UUID;
+
 
 public class Gift {
     private static ItemStack item1;
@@ -27,7 +24,7 @@ public class Gift {
     }
 
     private static ItemStack osaisen() {
-        ItemStack itemStack = new ItemStack(Material.NETHERITE_LEGGINGS);
+        ItemStack itemStack = new ItemStack(Material.RAW_COPPER);
         ItemMeta meta = itemStack.getItemMeta();
         meta.displayName(Component.text("お賽銭 "));
         itemStack.setItemMeta(meta);
@@ -54,10 +51,9 @@ public class Gift {
     }
 
     private static ItemStack tiisarahead() {
-        ItemStack itemStack = new ItemStack(Material.PLAYER_HEAD);
-        SkullMeta meta = (SkullMeta) itemStack.getItemMeta();
+        ItemStack itemStack = new ItemStack(Material.NETHERITE_HELMET);
+        ItemMeta meta = itemStack.getItemMeta();
         meta.displayName(Component.text("ちーさらなりきりセット（頭）", NamedTextColor.LIGHT_PURPLE));
-        meta.setPlayerProfile(Bukkit.getServer().createProfile(UUID.fromString("c6657b56-9aa2-45fe-8693-89d73c336025")));
 
         itemStack.setItemMeta(meta);
 
@@ -66,6 +62,9 @@ public class Gift {
 
     public static void Give(Player player) {
         PlayerInventory inventory = player.getInventory();
-        inventory.addItem(item1, item2, item3, item4);
+        inventory.setHelmet(item3);
+        inventory.setLeggings(item2);
+        inventory.setChestplate(item1);
+        inventory.addItem(item4);
     }
 }
