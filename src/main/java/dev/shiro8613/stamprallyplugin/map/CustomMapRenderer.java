@@ -37,10 +37,11 @@ public class CustomMapRenderer extends MapRenderer {
                 mapCanvas.drawImage(
                         imageAndPos.imagePos.x,
                         imageAndPos.imagePos.y,
-                        imageAndPos.image.getScaledInstance(42,42, Image.SCALE_DEFAULT)
+                    imageAndPos.image
                 )
         );
     }
+
 
     public static void LoadRenderer() {
         Map<Integer, String> map = DataStore.getMapStamp();
@@ -51,7 +52,7 @@ public class CustomMapRenderer extends MapRenderer {
                 if (has) {
                     Image image = DataStore.getImageMap().get(String.valueOf(stampId));
                     ImagePosition.ImagePos pos =  imagePosMap.get(stampId);
-                    imageAndPoses.add(new ImagePosition.ImageAndPos(image,pos));
+                    imageAndPoses.add(new ImagePosition.ImageAndPos(image.getScaledInstance(42, 42, Image.SCALE_DEFAULT), pos));
                 }
             });
 
@@ -70,7 +71,7 @@ public class CustomMapRenderer extends MapRenderer {
             if (has) {
                 Image image = DataStore.getImageMap().get(String.valueOf(stampId));
                 ImagePosition.ImagePos pos =  imagePosMap.get(stampId);
-                imageAndPoses.add(new ImagePosition.ImageAndPos(image,pos));
+                imageAndPoses.add(new ImagePosition.ImageAndPos(image.getScaledInstance(42, 42, Image.SCALE_DEFAULT),pos));
             }
         });
 
@@ -80,7 +81,9 @@ public class CustomMapRenderer extends MapRenderer {
     }
 
     private static void removeAndAddRenderer(MapView mapView, MapRenderer renderer) {
-        mapView.getRenderers().forEach(mapView::removeRenderer);
+        if (!mapView.getRenderers().isEmpty()) {
+            mapView.getRenderers().clear();
+        }
         mapView.addRenderer(renderer);
     }
 }
