@@ -20,7 +20,6 @@ import dev.shiro8613.stamprallyplugin.utils.json.StampData;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -33,7 +32,7 @@ import java.util.*;
 
 public final class StampRallyPlugin extends JavaPlugin {
 
-    private Database database;
+    private static Database database;
     private static JavaPlugin instance;
 
     @Override
@@ -87,6 +86,8 @@ public final class StampRallyPlugin extends JavaPlugin {
                                 if (Objects.nonNull(map) && !map.containsValue(false)) {
                                     Gift.Give(player);
                                     player.sendMessage(Component.text("景品を付与しました。", NamedTextColor.AQUA));
+                                    getServer().sendMessage(Component.text(player.getName(), NamedTextColor.YELLOW)
+                                            .append(Component.text("はスタンプラリーをクリアした！", NamedTextColor.AQUA)));
                                 } else {
                                     player.sendMessage(Component.text("まだスタンプが埋まっていません！", NamedTextColor.RED));
                                 }
@@ -210,6 +211,7 @@ public final class StampRallyPlugin extends JavaPlugin {
     public static JavaPlugin getInstance() {
         return instance;
     }
+    public static Database getDatabase() { return database; }
 
     private void LoadImages() {
         File dataFolder = getDataFolder();
