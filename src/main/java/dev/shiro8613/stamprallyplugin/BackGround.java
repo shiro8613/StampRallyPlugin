@@ -1,11 +1,13 @@
 package dev.shiro8613.stamprallyplugin;
 
+import dev.shiro8613.stamprallyplugin.database.Database;
 import dev.shiro8613.stamprallyplugin.memory.DataStore;
 import dev.shiro8613.stamprallyplugin.utils.DetectItem;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.sql.SQLException;
 import java.util.*;
 
 public class BackGround {
@@ -24,6 +26,21 @@ public class BackGround {
                     }
                 }
         }, 0, 20);
+
+        plugin.getServer().getScheduler().runTaskTimer(plugin, () ->{
+            try {
+                Database database = StampRallyPlugin.getDatabase();
+                if (database.getConn() == null || !database.getConn().isClosed()) {
+                    database.openConnection();
+                    DataStore.ReloadDataBase(database.getConn());
+                    DataStore.LoadMapStampData();
+                    DataStore.LoadLocationsData();
+                    plugin.getLogger().info("Database is reconnected");
+                }
+            } catch (SQLException | ClassNotFoundException e) {
+                plugin.getLogger().warning("");
+            }
+        }, 0, 20 * 30);
     }
 
     public static List<HasPlayer> getHasPlayerMap() {

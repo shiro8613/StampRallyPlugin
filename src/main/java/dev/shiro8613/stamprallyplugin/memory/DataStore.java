@@ -32,6 +32,10 @@ public class DataStore {
         LoadMapStampData();
     }
 
+    public static void ReloadDataBase(DatabaseConn database) {
+        databaseConn = database;
+    }
+
     public static void LoadLocationsData() {
         List<StampLocation> list = databaseConn.getStampLocation();
         if (list != null) {
